@@ -3,7 +3,7 @@ class Point {
 	constructor() {
 		const [x, y] = [width, height].map(n => n / 2);
 		this.coordinates = {x, y};
-		this.vector = this.randomVector();
+		this.randomizeVector();
 	}
 
 	move() {
@@ -18,13 +18,13 @@ class Point {
 		) {
 			this.coordinates.x = constrain(this.coordinates.x, 0, width  - 1);
 			this.coordinates.y = constrain(this.coordinates.y, 0, height - 1);
-			this.vector = this.randomVector();
+			this.randomizeVector();
 		}
 	}
 
-	randomVector() {
+	randomizeVector() {
 		const [x, y] = Array.from({length: 2}, () => random(settings.speed.min, settings.speed.max) * (Math.random() < 0.5 ? -1 : 1));
-		return {x, y};
+		this.vector = {x, y};
 	}
 }
 
@@ -40,8 +40,6 @@ const settings = {
 setup = () => {
 	createCanvas(windowWidth, windowHeight);
 	colorMode(HSB);
-	noFill();
-	strokeWeight(0.2);
 
 	settings.points = Array.from({length: settings.numberOfPoints}, () => new Point);
 }
@@ -55,8 +53,11 @@ draw = () => {
 			{x: x4, y: y4},
 		] = Array.from({length: 4}, (_, n) => settings.points[(i + n) % settings.points.length].coordinates);
 
+		noFill();
+		strokeWeight(0.2);
 		stroke([360, 100, 100].map(n => (frameCount + n / settings.numberOfPoints * i) % n));
 		bezier(x1, y1, x2, y2, x3, y3, x4, y4);
+
 		settings.points[i].move();
 	}
 }
